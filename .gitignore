@@ -1,0 +1,10 @@
+# Do not track credentials file
+creds.json
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.env
