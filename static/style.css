@@ -1,0 +1,37 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f6f9fc;
+    padding: 30px;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1 {
+    color: #2a7ae2;
+}
+
+form input {
+    margin-bottom: 10px;
+    padding: 8px;
+    width: 200px;
+}
+
+form input[type="submit"] {
+    background-color: #2a7ae2;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background-color: #1e5bbd;
+}
+
+a {
+    color: #2a7ae2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
