@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BMI Calculator</title>
+</head>
+<body>
+  <h1>Welcome to the Fitness BMI Calculator 💪</h1>
+  {% if error %}
+    <p style="color:red;">{{ error }}</p>
+  {% endif %}
+  <form method="POST">
+    <label>Weight (kg):</label>
+    <input type="number" name="weight" step="any" required><br><br>
+    <label>Height (cm):</label>
+    <input type="number" name="height" step="any" required><br><br>
+    <input type="submit" value="Calculate BMI">
+  </form>
+</body>
+</html>
