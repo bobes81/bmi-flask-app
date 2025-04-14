@@ -12,16 +12,17 @@ scope = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-creds_json = os.getenv("GOOGLE_CREDS_JSON")
+# Načtení JSON stringu z proměnné prostředí a správné dekódování
+creds_json = os.environ.get("GOOGLE_CREDS_JSON")
 
-# Odstraň uvozovky, pokud jsou přidané Renderem
-if creds_json.startswith('"') and creds_json.endswith('"'):
-    creds_json = creds_json[1:-1]
+# Pokud proměnná je None, zastav aplikaci s chybou (pro jistotu)
+if not creds_json:
+    raise ValueError("Environment variable 'GOOGLE_CREDS_JSON' not set")
 
-# Nahraď explicitně escapované znaky jako \\n za skutečné nové řádky
-creds_json = creds_json.replace('\\n', '\n')
+# Některé build systémy escapují znaky jako \\n – opravíme to:
+creds_json = creds_json.encode('utf-8').decode('unicode_escape')
 
-# Načti jako Python dict
+# Načtení JSON do slovníku
 creds_dict = json.loads(creds_json)
 
 # Autorizace Google Sheets API
@@ -72,5 +73,3 @@ def index():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
-# Test commit to trigger fresh deploy
