@@ -3,7 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
-import ast
+import codecs
 
 app = Flask(__name__)
 
@@ -14,16 +14,16 @@ scope = [
 ]
 
 # Získání proměnné jako string
-creds_env_raw = os.getenv("GOOGLE_CREDS_JSON")
+creds_json = os.getenv("GOOGLE_CREDS_JSON")
 
-# Kontrola, zda proměnná existuje
-if not creds_env_raw:
-    raise ValueError("Environment variable 'GOOGLE_CREDS_JSON' not set")
+# Odstraň uvozovky, pokud Heroku přidalo ""
+if creds_json.startswith('"') and creds_json.endswith('"'):
+    creds_json = creds_json[1:-1]
 
-# Použij ast.literal_eval k převedení escapovaných znaků na platný string
-creds_json = ast.literal_eval(f"'''{creds_env_raw}'''")
+# Dekóduj escapované znaky (např. \n -> nový řádek)
+creds_json = codecs.decode(creds_json, 'unicode_escape')
 
-# Načti jako Python dict
+# Převeď na Python slovník
 creds_dict = json.loads(creds_json)
 
 # Autorizace Google Sheets API
