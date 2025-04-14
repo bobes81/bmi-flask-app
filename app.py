@@ -3,8 +3,6 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
-# ✅ Triggering redeploy with minor change
-
 
 app = Flask(__name__)
 
@@ -16,14 +14,14 @@ scope = [
 
 creds_json = os.getenv("GOOGLE_CREDS_JSON")
 
-# Pokud Render escapuje automaticky (např. s uvozovkami kolem celého stringu)
+# Pokud jsou v uvozovkách, odstraníme je
 if creds_json.startswith('"') and creds_json.endswith('"'):
     creds_json = creds_json[1:-1]
 
-# Dekódujeme escapované znaky (např. \n v klíči)
+# Dekódujeme escapované znaky jako \n
 creds_json = creds_json.encode().decode('unicode_escape')
 
-# Jediný správný json.loads, převede na dict
+# Převedeme na Python dict
 creds_dict = json.loads(creds_json)
 
 # Autorizace Google Sheets API
