@@ -18,10 +18,13 @@ creds_json = os.getenv("GOOGLE_CREDS_JSON")
 print("Typ creds_json:", type(creds_json))
 print("Obsah creds_json:", repr(creds_json))
 
-creds_dict = json.loads(creds_json)
+# Potřebujeme double-load kvůli tomu, jak je JSON zapsán v Render env proměnné
+creds_dict = json.loads(json.loads(creds_json))
+
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 sheet = client.open("bmi-results").sheet1
+
 
 def calculate_bmi(weight, height_cm):
     height_m = height_cm / 100
