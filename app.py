@@ -3,6 +3,8 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
+# ✅ Triggering redeploy with minor change
+
 
 app = Flask(__name__)
 
@@ -14,13 +16,17 @@ scope = [
 
 creds_json = os.getenv("GOOGLE_CREDS_JSON")
 
-# DEBUG (dočasně - smaž po testu)
-print("Typ creds_json:", type(creds_json))
-print("Obsah creds_json:", repr(creds_json))
+# Pokud Render escapuje automaticky (např. s uvozovkami kolem celého stringu)
+if creds_json.startswith('"') and creds_json.endswith('"'):
+    creds_json = creds_json[1:-1]
 
-# Potřebujeme double-load kvůli tomu, jak je JSON zapsán v Render env proměnné
-creds_dict = json.loads(json.loads(creds_json))
+# Dekódujeme escapované znaky (např. \n v klíči)
+creds_json = creds_json.encode().decode('unicode_escape')
 
+# Jediný správný json.loads, převede na dict
+creds_dict = json.loads(creds_json)
+
+# Autorizace Google Sheets API
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 sheet = client.open("bmi-results").sheet1
@@ -64,5 +70,9 @@ def index():
 
     return render_template("index.html")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# Přidání kódu pro nastavení portu na Renderu
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+
+# Test commit to trigger fresh deploy
