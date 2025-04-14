@@ -1,25 +1,21 @@
 import os
 import json
-import base64
 from flask import Flask, render_template, request
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
 
-# Získání base64 řetězce z Heroku proměnné
-creds_b64 = os.environ.get("CREDS")
-
-# Převod base64 → JSON string → slovník
-creds_json = base64.b64decode(creds_b64).decode("utf-8")
-creds_dict = json.loads(creds_json)
+# Načtení credentials ze souboru creds.json
+with open("creds.json") as f:
+    creds = json.load(f)
 
 # Přístup k Google Sheets
 scope = [
     'https://spreadsheets.google.com/feeds',
     'https://www.googleapis.com/auth/drive'
 ]
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds, scope)
 client = gspread.authorize(creds)
 sheet = client.open("bmi-results").sheet1
 
