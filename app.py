@@ -3,6 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
+import ast
 
 app = Flask(__name__)
 
@@ -12,17 +13,17 @@ scope = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-# Načtení JSON stringu z proměnné prostředí a správné dekódování
-creds_json = os.environ.get("GOOGLE_CREDS_JSON")
+# Získání proměnné jako string
+creds_env_raw = os.getenv("GOOGLE_CREDS_JSON")
 
-# Pokud proměnná je None, zastav aplikaci s chybou (pro jistotu)
-if not creds_json:
+# Kontrola, zda proměnná existuje
+if not creds_env_raw:
     raise ValueError("Environment variable 'GOOGLE_CREDS_JSON' not set")
 
-# Některé build systémy escapují znaky jako \\n – opravíme to:
-creds_json = creds_json.encode('utf-8').decode('unicode_escape')
+# Použij ast.literal_eval k převedení escapovaných znaků na platný string
+creds_json = ast.literal_eval(f"'''{creds_env_raw}'''")
 
-# Načtení JSON do slovníku
+# Načti jako Python dict
 creds_dict = json.loads(creds_json)
 
 # Autorizace Google Sheets API
