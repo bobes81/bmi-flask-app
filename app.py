@@ -13,6 +13,11 @@ scope = [
 ]
 
 creds_json = os.getenv("GOOGLE_CREDS_JSON")
+
+# DEBUG (dočasně - smaž po testu)
+print("Typ creds_json:", type(creds_json))
+print("Obsah creds_json:", repr(creds_json))
+
 creds_dict = json.loads(creds_json)
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
