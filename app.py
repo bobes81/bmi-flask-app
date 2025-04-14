@@ -4,6 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
 import codecs
+import base64
 
 app = Flask(__name__)
 
@@ -13,17 +14,13 @@ scope = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-# Získání proměnné jako string
-creds_json = os.getenv("GOOGLE_CREDS_JSON")
+# Získat proměnnou z Heroku env
+creds_b64 = os.environ.get("GOOGLE_CREDS_B64")
 
-# Odstraň uvozovky, pokud Heroku přidalo ""
-if creds_json.startswith('"') and creds_json.endswith('"'):
-    creds_json = creds_json[1:-1]
+# Dekódovat z base64 do JSON stringu
+creds_json = base64.b64decode(creds_b64).decode("utf-8")
 
-# Dekóduj escapované znaky (např. \n -> nový řádek)
-creds_json = codecs.decode(creds_json, 'unicode_escape')
-
-# Převeď na Python slovník
+# Načíst jako dict
 creds_dict = json.loads(creds_json)
 
 # Autorizace Google Sheets API
