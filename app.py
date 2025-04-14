@@ -1,38 +1,33 @@
 import os
 import json
+import base64
 from flask import Flask, render_template, request
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
 
-# ✅ Získat a uložit přihlašovací údaje z environment variable
-creds_env = os.environ.get("CREDS")
-if not creds_env:
-    raise Exception("Missing CREDS environment variable.")
+# Získání base64 řetězce z Heroku proměnné
+creds_b64 = os.environ.get("CREDS")
 
-creds_dict = json.loads(creds_env)
-with open("creds.json", "w") as f:
-    json.dump(creds_dict, f)
+# Převod base64 → JSON string → slovník
+creds_json = base64.b64decode(creds_b64).decode("utf-8")
+creds_dict = json.loads(creds_json)
 
-# ✅ Nastavit přístupové rozsahy
+# Přístup k Google Sheets
 scope = [
     'https://spreadsheets.google.com/feeds',
     'https://www.googleapis.com/auth/drive'
 ]
-
-# ✅ Autorizace přes gspread
-creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 sheet = client.open("bmi-results").sheet1
 
-# ✅ Výpočet BMI
 def calculate_bmi(weight, height_cm):
     height_m = height_cm / 100
     bmi = weight / (height_m ** 2)
     return round(bmi, 2)
 
-# ✅ Kategorizace BMI
 def get_bmi_category(bmi):
     if bmi < 18.5:
         return "Underweight", "Increase healthy calories, try strength training with supervision."
@@ -45,7 +40,6 @@ def get_bmi_category(bmi):
     else:
         return "Muscle Building", "Combine strength training with high protein intake and proper rest."
 
-# ✅ Hlavní route
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -64,9 +58,10 @@ def index():
             return render_template("result.html", bmi=bmi, category=category, advice=advice)
         except ValueError:
             return render_template("index.html", error="Invalid input. Please enter numbers only.")
+
     return render_template("index.html")
 
-# ✅ Pro Render nebo Heroku (běh na portu)
+# Heroku / Render port
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
