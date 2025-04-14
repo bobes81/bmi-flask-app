@@ -14,14 +14,14 @@ scope = [
 
 creds_json = os.getenv("GOOGLE_CREDS_JSON")
 
-# Pokud jsou v uvozovkách, odstraníme je
+# Odstraň uvozovky, pokud jsou přidané Renderem
 if creds_json.startswith('"') and creds_json.endswith('"'):
     creds_json = creds_json[1:-1]
 
-# Dekódujeme escapované znaky jako \n
-creds_json = creds_json.encode().decode('unicode_escape')
+# Nahraď explicitně escapované znaky jako \\n za skutečné nové řádky
+creds_json = creds_json.replace('\\n', '\n')
 
-# Převedeme na Python dict
+# Načti jako Python dict
 creds_dict = json.loads(creds_json)
 
 # Autorizace Google Sheets API
