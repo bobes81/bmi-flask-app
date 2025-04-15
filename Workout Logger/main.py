@@ -15,8 +15,10 @@ SCOPE = ["https://www.googleapis.com/auth/spreadsheets",
 CREDS = Credentials.from_service_account_file("creds.json")
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
-SHEET = GSPREAD_CLIENT.open("Workout Log")
-worksheet = SHEET.worksheet("logs")
+SHEET = GSPREAD_CLIENT.open("workout-log")
+
+worksheet = SHEET.worksheet("Sheet2")
+
 
 # --- Safety Questions --- #
 def run_safety_check():
@@ -94,3 +96,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # Added comment to force save
+
