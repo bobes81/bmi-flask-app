@@ -15,8 +15,15 @@ scope = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-client = gspread.authorize(creds)
+GOOGLE_CREDS_JSON = os.getenv("GOOGLE_CREDS_JSON")
+
+if not GOOGLE_CREDS_JSON:
+    raise ValueError("Environment variable 'GOOGLE_CREDS_JSON' not set")
+
+with open(GOOGLE_CREDS_JSON) as f:
+    creds = json.load(f)
+
+client = gspread.authorize(ServiceAccountCredentials.from_json_keyfile_dict(creds, scope))
 sheet = client.open("bmi-results").sheet1
 
 def calculate_bmi(weight, height):
