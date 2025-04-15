@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your BMI Results</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 </head>
 <body>
   <h1>Your BMI Results</h1>
@@ -17,7 +18,7 @@
     <p style="color:red;">There was a problem saving to Google Sheets.</p>
   {% endif %}
 
-  <button onclick="openSheet()">View your results</button>
+  <p><a href="https://docs.google.com/spreadsheets/d/1HG43ClxXnEMOvzGomH5ehx-KIkoqLTmvhcaBg4mrmHc/edit?usp=sharing" target="_blank" rel="noopener noreferrer">View your results here</a></p>
 
   <br>
   <a href="/">Calculate Again</a>
