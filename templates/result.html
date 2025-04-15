@@ -7,22 +7,35 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h1>Your BMI Results</h1>
-  <p><strong>BMI:</strong> {{ bmi }}</p>
-  <p><strong>Category:</strong> {{ category }}</p>
-  <p><strong>Advice:</strong> {{ advice }}</p>
+  <div class="container">
+    <h1>Your BMI Results</h1>
 
-  {% if success %}
-    <p style="color:green;">Your result has been saved to Google Sheets.</p>
-  {% else %}
-    <p style="color:red;">There was a problem saving to Google Sheets.</p>
-  {% endif %}
+    <p class="result-message"><strong>BMI:</strong> {{ bmi }}</p>
+    <p class="result-message"><strong>Category:</strong> {{ category }}</p>
+    <p class="result-message"><strong>Advice:</strong> {{ advice }}</p>
 
-  <p><a href="https://docs.google.com/spreadsheets/d/1HG43ClxXnEMOvzGomH5ehx-KIkoqLTmvhcaBg4mrmHc/edit?usp=sharing" target="_blank" rel="noopener noreferrer">View your results here</a></p>
+    {% if success %}
+      <p class="result-message result-success">✅ Your result has been saved to Google Sheets.</p>
+    {% else %}
+      <p class="result-message result-error">❌ There was a problem saving your result.</p>
+    {% endif %}
 
-  <br>
-  <a href="/">Calculate Again</a>
+    <p>
+      <a href="https://docs.google.com/spreadsheets/d/1HG43ClxXnEMOvzGomH5ehx-KIkoqLTmvhcaBg4mrmHc/edit?usp=sharing" 
+         target="_blank" 
+         rel="noopener noreferrer">
+         📊 View your results in Google Sheets
+      </a>
+    </p>
+
+    <br>
+
+    <a href="/">
+      🔁 Calculate Again
+    </a>
+  </div>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
+
