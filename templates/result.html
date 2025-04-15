@@ -1,15 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BMI Result</title>
+  <title>Your BMI Results</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
   <h1>Your BMI Results</h1>
   <p><strong>BMI:</strong> {{ bmi }}</p>
   <p><strong>Category:</strong> {{ category }}</p>
   <p><strong>Advice:</strong> {{ advice }}</p>
-  <p>✅ Your result has been saved to Google Sheets.</p>
-  <p>🔗 <a href="https://docs.google.com/spreadsheets/d/1HG43ClxXnEMOvzGomH5ehx-KlkoqLTmvhcaBg4mrmHc/edit#gid=0" target="_blank">View your results here</a></p>
+
+  {% if success %}
+    <p style="color:green;">Your result has been saved to Google Sheets.</p>
+  {% else %}
+    <p style="color:red;">There was a problem saving to Google Sheets.</p>
+  {% endif %}
+
+  <button onclick="openSheet()">View your results</button>
+
+  <br>
   <a href="/">Calculate Again</a>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

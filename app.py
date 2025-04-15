@@ -1,63 +1,68 @@
 import os
-import json
-from flask import Flask, render_template, request
 import gspread
+from flask import Flask, render_template, request
 from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
 
-# Načtení credentials ze souboru creds.json
-with open("creds.json") as f:
-    creds = json.load(f)
-
-# Přístup k Google Sheets
+# Setup Google Sheets API
 scope = [
-    'https://spreadsheets.google.com/feeds',
-    'https://www.googleapis.com/auth/drive'
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive"
 ]
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds, scope)
+
+creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("bmi-results").sheet1
 
-def calculate_bmi(weight, height_cm):
-    height_m = height_cm / 100
-    bmi = weight / (height_m ** 2)
-    return round(bmi, 2)
+def calculate_bmi(weight, height):
+    height_m = height / 100
+    bmi = round(weight / (height_m ** 2), 1)
+    return bmi
 
 def get_bmi_category(bmi):
     if bmi < 18.5:
-        return "Underweight", "Increase healthy calories, try strength training with supervision."
+        return "Underweight", "Try to gain weight with a nutritious diet."
     elif 18.5 <= bmi < 25:
-        return "Normal weight", "Maintain your routine, mix cardio and bodyweight training."
+        return "Normal weight", "Maintain your current routine."
     elif 25 <= bmi < 30:
-        return "Overweight", "Focus on cardio and a balanced diet, aim for consistency."
-    elif 30 <= bmi < 35:
-        return "Obese", "Prioritize low-impact cardio and consult a healthcare provider."
+        return "Overweight", "Consider more activity and mindful eating."
     else:
-        return "Muscle Building", "Combine strength training with high protein intake and proper rest."
+        return "Obese", "Consult with a healthcare provider."
 
-@app.route("/", methods=["GET", "POST"])
+def save_to_sheets(bmi, category):
+    try:
+        sheet.append_row([str(bmi), category])
+        return True
+    except Exception as e:
+        print(f"Error saving to Google Sheets: {e}")
+        return False
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == "POST":
+    if request.method == 'POST':
         try:
-            weight = float(request.form["weight"])
-            height_cm = float(request.form["height"])
+            weight = float(request.form['weight'])
+            height = float(request.form['height'])
 
-            if weight <= 0 or height_cm <= 0:
-                return render_template("index.html", error="Please enter positive values.")
+            if weight < 30 or weight > 300 or height < 100 or height > 250:
+                raise ValueError("Unrealistic input values")
 
-            bmi = calculate_bmi(weight, height_cm)
+            bmi = calculate_bmi(weight, height)
             category, advice = get_bmi_category(bmi)
+            success = save_to_sheets(bmi, category)
 
-            sheet.append_row([weight, height_cm, bmi, category])
+            return render_template("result.html", bmi=bmi, category=category, advice=advice, success=success)
 
-            return render_template("result.html", bmi=bmi, category=category, advice=advice)
         except ValueError:
-            return render_template("index.html", error="Invalid input. Please enter numbers only.")
+            return render_template("index.html", error="Please enter realistic height (100–250 cm) and weight (30–300 kg).")
 
     return render_template("index.html")
 
-# Heroku / Render port
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
+if __name__ == "__main__":
+    print("Running in debug mode...")
+    app.run(debug=True)
