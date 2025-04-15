@@ -1,6 +1,10 @@
 import os
-import gspread
+from dotenv import load_dotenv
+load_dotenv()
+
+import json
 from flask import Flask, render_template, request
+import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)

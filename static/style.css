@@ -1,37 +1,98 @@
+/* === Global Styles === */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f6f9fc;
-    padding: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
     color: #333;
-    line-height: 1.6;
-}
-
-h1 {
-    color: #2a7ae2;
-}
-
-form input {
-    margin-bottom: 10px;
-    padding: 8px;
-    width: 200px;
-}
-
-form input[type="submit"] {
-    background-color: #2a7ae2;
+  }
+  
+  h1 {
+    margin-top: 40px;
+    color: #1e3a8a;
+    font-size: 2.2em;
+  }
+  
+  p {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+  }
+  
+  /* === Container === */
+  .container {
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 40px;
+    margin-top: 30px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+  }
+  
+  /* === Form Styles === */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  input[type="number"] {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    width: 100%;
+  }
+  
+  input[type="submit"],
+  button {
+    background-color: #1e3a8a;
     color: white;
+    padding: 12px 20px;
     border: none;
+    border-radius: 25px;
+    font-size: 1em;
     cursor: pointer;
-}
-
-form input[type="submit"]:hover {
-    background-color: #1e5bbd;
-}
-
-a {
-    color: #2a7ae2;
+    transition: background-color 0.3s ease;
+  }
+  
+  input[type="submit"]:hover,
+  button:hover {
+    background-color: #3b55c5;
+  }
+  
+  /* === Result Page === */
+  .result-message {
+    font-weight: bold;
+    margin: 16px 0;
+  }
+  
+  .result-success {
+    color: green;
+  }
+  
+  .result-error {
+    color: red;
+  }
+  
+  /* === Links === */
+  a {
+    color: #1e3a8a;
     text-decoration: none;
-}
-
-a:hover {
+    font-weight: bold;
+  }
+  
+  a:hover {
     text-decoration: underline;
-}
+  }
+  
+  /* === Emoji styling === */
+  h1::after {
+    content: " 💪";
+    font-size: 1.2em;
+  }
